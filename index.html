@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn German - Polyglott.in</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fffacd; /* Light yellow for fun vibe */
+        }
+        header {
+            background-color: #000; /* Black for German flag */
+            color: #ffd700; /* Yellow text */
+            text-align: center;
+            padding: 2em;
+        }
+        nav {
+            background-color: #ff0000; /* Red for German flag */
+            padding: 1em;
+            text-align: center;
+        }
+        nav a {
+            margin: 0 1em;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            max-width: 800px;
+            margin: 2em auto;
+            padding: 1em;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .login, .content {
+            display: none;
+            text-align: center;
+        }
+        .login.active, .content.active {
+            display: block;
+        }
+        .vocab-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1em;
+        }
+        .vocab-table th, .vocab-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .vocab-table th {
+            background-color: #000;
+            color: #ffd700;
+        }
+        .quiz button {
+            margin: 0.5em;
+            padding: 0.5em 1em;
+            background-color: #ff0000;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .quiz button:hover {
+            background-color: #cc0000;
+        }
+        footer {
+            background-color: #000;
+            color: #ffd700;
+            text-align: center;
+            padding: 1em;
+        }
+    </style>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Learn German - Polyglott.in</h1>
+        <p>Fun and colorful German learning for A1-B2 levels!</p>
+    </header>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/lessons.html">Lessons</a>
+        <a href="/quizzes.html">Quizzes</a>
+        <a href="/blog.html">Blog</a>
+        <a href="https://try.discourse.org" target="_blank">Forum</a>
+        <a href="#" id="logout" style="display:none;">Logout</a>
+    </nav>
+    <div class="container login active" id="login">
+        <h2>Login or Register</h2>
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="register()">Register</button>
+        <button onclick="login()">Login</button>
+    </div>
+    <div class="container content" id="content">
+        <h2>A1 Vocabulary: Greetings</h2>
+        <table class="vocab-table">
+            <tr>
+                <th>German</th>
+                <th>English</th>
+                <th>Pronunciation</th>
+            </tr>
+            <tr>
+                <td>Hallo</td>
+                <td>Hello</td>
+                <td><a href="https://forvo.com/word/hallo/#de" target="_blank">Listen</a></td>
+            </tr>
+            <tr>
+                <td>Guten Morgen</td>
+                <td>Good Morning</td>
+                <td><a href="https://forvo.com/word/guten_morgen/#de" target="_blank">Listen</a></td>
+            </tr>
+            <tr>
+                <td>Danke</td>
+                <td>Thank you</td>
+                <td><a href="https://forvo.com/word/danke/#de" target="_blank">Listen</a></td>
+            </tr>
+        </table>
+        <h2>Sample A1 Quiz</h2>
+        <div class="quiz">
+            <p>What is the German word for "Thank you"?</p>
+            <button onclick="checkAnswer('Danke')">Danke</button>
+            <button onclick="checkAnswer('Bitte')">Bitte</button>
+            <button onclick="checkAnswer('Tschüss')">Tschüss</button>
+            <p id="quiz-result"></p>
+        </div>
+        <h2>Video Tutorial</h2>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/9f4WM2o1f2s" frameborder="0" allowfullscreen></iframe>
+        <p>Explore more on <a href="/lessons.html">Lessons</a> or <a href="/quizzes.html">Quizzes</a>.</p>
+    </div>
+    <footer>
+        <p>&copy; 2025 Polyglott.in. All rights reserved.</p>
+    </footer>
+    <script>
+        // Firebase configuration (replace with your Firebase project config)
+        const firebaseConfig = {
+  apiKey: "AIzaSyC9yTlvyt0pk7gQ_D4NTL-CgHNeIxMHW30",
+  authDomain: "polyglott-in.firebaseapp.com",
+  projectId: "polyglott-in",
+  storageBucket: "polyglott-in.firebasestorage.app",
+  messagingSenderId: "1086331543286",
+  appId: "1:1086331543286:web:5a5092113c5403477256d7"
+};
+        firebase.initializeApp(firebaseConfig);
+
+        function register() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+                .then(() => showContent())
+                .catch(error => alert(error.message));
+        }
+
+        function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            firebase.auth().signInWithEmailAndPassword(email, password)
+                .then(() => showContent())
+                .catch(error => alert(error.message));
+        }
+
+        function showContent() {
+            document.getElementById('login').classList.remove('active');
+            document.getElementById('content').classList.add('active');
+            document.getElementById('logout').style.display = 'inline';
+        }
+
+        document.getElementById('logout').addEventListener('click', () => {
+            firebase.auth().signOut().then(() => {
+                document.getElementById('login').classList.add('active');
+                document.getElementById('content').classList.remove('active');
+                document.getElementById('logout').style.display = 'none';
+            });
+        });
+
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                showContent();
+            } else {
+                document.getElementById('login').classList.add('active');
+                document.getElementById('content').classList.remove('active');
+                document.getElementById('logout').style.display = 'none';
+            }
+        });
+
+        function checkAnswer(answer) {
+            const result = document.getElementById('quiz-result');
+            if (answer === 'Danke') {
+                result.textContent = 'Correct! "Danke" means "Thank you".';
+            } else {
+                result.textContent = 'Incorrect. Try again!';
+            }
+        }
+    </script>
+</body>
+</html>
